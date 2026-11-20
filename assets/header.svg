@@ -6,17 +6,45 @@
       <stop offset="1" stop-color="#00d4ff"/>
     </linearGradient>
 
-    <!-- Moving horizontal bands used to "tear" the name during a glitch burst -->
+    <!-- CRT scanline texture applied to the main name -->
+    <pattern id="scanPat" patternUnits="userSpaceOnUse" width="4" height="3">
+      <rect width="4" height="3" fill="#fff"/>
+      <rect y="2" width="4" height="1" fill="#9a9a9a"/>
+    </pattern>
+    <mask id="scan" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="300">
+      <rect width="1200" height="300" fill="url(#scanPat)"/>
+    </mask>
+
+    <!--
+      Torn bands. Each band sits off-canvas (y = -60) between bursts and jumps
+      across the name during a small burst (~40%) and a big burst (~82-96%).
+    -->
     <clipPath id="sliceA">
-      <rect x="0" width="1200" height="16" y="0">
-        <animate attributeName="y" dur="3.2s" repeatCount="indefinite" calcMode="discrete"
-                 keyTimes="0;0.84;0.87;0.90;0.93;0.96;1" values="-50;92;128;104;140;-50;-50"/>
+      <rect x="0" width="1200" height="18" y="-60">
+        <animate attributeName="y" dur="4s" repeatCount="indefinite" calcMode="discrete"
+                 keyTimes="0;0.38;0.40;0.42;0.82;0.85;0.88;0.91;0.94;0.96;1"
+                 values="-60;100;130;-60;88;120;140;98;150;-60;-60"/>
       </rect>
     </clipPath>
     <clipPath id="sliceB">
-      <rect x="0" width="1200" height="10" y="0">
-        <animate attributeName="y" dur="3.2s" repeatCount="indefinite" calcMode="discrete"
-                 keyTimes="0;0.85;0.88;0.91;0.94;0.97;1" values="-50;135;84;150;112;-50;-50"/>
+      <rect x="0" width="1200" height="8" y="-60">
+        <animate attributeName="y" dur="4s" repeatCount="indefinite" calcMode="discrete"
+                 keyTimes="0;0.39;0.41;0.43;0.83;0.86;0.89;0.92;0.95;1"
+                 values="-60;145;92;-60;150;82;112;135;-60;-60"/>
+      </rect>
+    </clipPath>
+    <clipPath id="sliceC">
+      <rect x="0" width="1200" height="24" y="-60">
+        <animate attributeName="y" dur="4s" repeatCount="indefinite" calcMode="discrete"
+                 keyTimes="0;0.84;0.87;0.90;0.93;0.96;1"
+                 values="-60;104;76;128;90;-60;-60"/>
+      </rect>
+    </clipPath>
+    <clipPath id="sliceD">
+      <rect x="0" width="1200" height="5" y="-60">
+        <animate attributeName="y" dur="4s" repeatCount="indefinite" calcMode="discrete"
+                 keyTimes="0;0.40;0.42;0.44;0.82;0.84;0.86;0.88;0.90;0.92;0.94;1"
+                 values="-60;118;84;-60;155;95;125;80;142;108;-60;-60"/>
       </rect>
     </clipPath>
   </defs>
@@ -25,6 +53,8 @@
     .name {
       font: 800 88px 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
       text-anchor: middle;
+      transform-box: fill-box;
+      transform-origin: center;
     }
     .sub {
       font: 600 24px 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
@@ -32,77 +62,163 @@
       fill: #ffffff;
     }
 
-    /* Chromatic-aberration layers: a slight constant offset, then a jittery burst */
-    .red  { fill: #ff00c8; opacity: .85; animation: red 3.2s infinite steps(1); }
-    .cyan { fill: #00f0ff; opacity: .85; animation: cyan 3.2s infinite steps(1); }
+    /* ---------- RGB split layers ---------- */
+    .red  { fill: #ff00c8; opacity: .85; animation: red  4s infinite steps(1); }
+    .cyan { fill: #00f0ff; opacity: .85; animation: cyan 4s infinite steps(1); }
 
     @keyframes red {
-      0%, 84%, 100% { transform: translate(-2px, 0); }
-      86% { transform: translate(-8px, 2px); }
-      88% { transform: translate(5px, -2px); }
-      90% { transform: translate(-10px, 0); }
-      92% { transform: translate(3px, 1px); }
-      94% { transform: translate(-6px, -1px); }
+      0%, 100% { transform: translate(-2px, 0); }
+      38% { transform: translate(-7px, 1px); }
+      40% { transform: translate(4px, -1px); }
+      42% { transform: translate(-2px, 0); }
+      82% { transform: translate(-12px, 2px) skewX(-8deg); }
+      84% { transform: translate(6px, -2px); }
+      86% { transform: translate(-16px, 0) skewX(10deg); }
+      88% { transform: translate(4px, 3px); }
+      90% { transform: translate(-9px, -2px) skewX(-5deg); }
+      92% { transform: translate(7px, 0); }
+      94% { transform: translate(-5px, 1px); }
       96% { transform: translate(-2px, 0); }
     }
     @keyframes cyan {
-      0%, 84%, 100% { transform: translate(2px, 0); }
-      86% { transform: translate(8px, -2px); }
-      88% { transform: translate(-5px, 2px); }
-      90% { transform: translate(10px, 0); }
-      92% { transform: translate(-3px, -1px); }
-      94% { transform: translate(6px, 1px); }
+      0%, 100% { transform: translate(2px, 0); }
+      38% { transform: translate(7px, -1px); }
+      40% { transform: translate(-4px, 1px); }
+      42% { transform: translate(2px, 0); }
+      82% { transform: translate(12px, -2px) skewX(8deg); }
+      84% { transform: translate(-6px, 2px); }
+      86% { transform: translate(16px, 0) skewX(-10deg); }
+      88% { transform: translate(-4px, -3px); }
+      90% { transform: translate(9px, 2px) skewX(5deg); }
+      92% { transform: translate(-7px, 0); }
+      94% { transform: translate(5px, -1px); }
       96% { transform: translate(2px, 0); }
     }
 
-    /* Torn slices: only visible during the burst */
-    .sliceA { fill: #ffffff; animation: sliceA 3.2s infinite steps(1); }
-    .sliceB { fill: #ffffff; animation: sliceB 3.2s infinite steps(1); }
-
-    @keyframes sliceA {
-      0%, 84%, 96%, 100% { opacity: 0; transform: none; }
-      85% { opacity: 1; transform: translate(-18px, 0); }
-      88% { opacity: 1; transform: translate(14px, 0); }
-      91% { opacity: 1; transform: translate(-24px, 0); }
-      94% { opacity: 1; transform: translate(10px, 0); }
-    }
-    @keyframes sliceB {
-      0%, 85%, 97%, 100% { opacity: 0; transform: none; }
-      86% { opacity: 1; transform: translate(22px, 0); }
-      89% { opacity: 1; transform: translate(-12px, 0); }
-      92% { opacity: 1; transform: translate(18px, 0); }
-      95% { opacity: 1; transform: translate(-16px, 0); }
+    /* ---------- Main white name: jolts, skews and flickers ---------- */
+    .main { fill: #ffffff; animation: main 4s infinite steps(1); }
+    @keyframes main {
+      0%, 100% { transform: none; opacity: 1; }
+      39% { transform: translateX(3px); opacity: .85; }
+      41% { transform: none; opacity: 1; }
+      83% { transform: skewX(-10deg) translateX(-4px); opacity: .8; }
+      85% { transform: skewX(6deg) translateX(3px); opacity: 1; }
+      87% { transform: none; opacity: .5; }
+      89% { transform: translateX(-2px) scaleY(1.06); opacity: 1; }
+      92% { transform: skewX(-4deg); opacity: .7; }
+      94% { transform: none; opacity: 1; }
     }
 
-    /* Main white name flickers briefly during the burst */
-    .main { fill: #ffffff; animation: flicker 3.2s infinite steps(1); }
-    @keyframes flicker {
-      0%, 84%, 100% { opacity: 1; }
-      87% { opacity: .75; }
-      89% { opacity: 1; }
-      92% { opacity: .6; }
-      93% { opacity: 1; }
+    /* ---------- Torn slices (visible only where their band is) ---------- */
+    .sA { fill: #ffffff; animation: sA 4s infinite steps(1); }
+    .sB { fill: #00f0ff; animation: sB 4s infinite steps(1); }
+    .sC { fill: #ffffff; animation: sC 4s infinite steps(1); }
+    .sD { fill: #ff00c8; animation: sD 4s infinite steps(1); }
+
+    @keyframes sA {
+      0%, 100% { transform: none; }
+      38% { transform: translateX(-22px); }
+      40% { transform: translateX(16px); }
+      42% { transform: none; }
+      82% { transform: translateX(-28px); }
+      85% { transform: translateX(20px); }
+      88% { transform: translateX(-36px); }
+      91% { transform: translateX(12px); }
+      94% { transform: translateX(-18px); }
+      96% { transform: none; }
     }
+    @keyframes sB {
+      0%, 100% { transform: none; }
+      39% { transform: translateX(30px); }
+      41% { transform: translateX(-14px); }
+      43% { transform: none; }
+      83% { transform: translateX(34px); }
+      86% { transform: translateX(-24px); }
+      89% { transform: translateX(18px); }
+      92% { transform: translateX(-30px); }
+      95% { transform: none; }
+    }
+    @keyframes sC {
+      0%, 100% { transform: none; }
+      84% { transform: translateX(-14px); }
+      87% { transform: translateX(26px); }
+      90% { transform: translateX(-20px); }
+      93% { transform: translateX(32px); }
+      96% { transform: none; }
+    }
+    @keyframes sD {
+      0%, 100% { transform: none; }
+      40% { transform: translateX(40px); }
+      42% { transform: translateX(-26px); }
+      44% { transform: none; }
+      82% { transform: translateX(-45px); }
+      84% { transform: translateX(30px); }
+      86% { transform: translateX(-20px); }
+      88% { transform: translateX(50px); }
+      90% { transform: translateX(-35px); }
+      92% { transform: translateX(22px); }
+      94% { transform: none; }
+    }
+
+    /* ---------- Interference bars sweeping down during the big burst ---------- */
+    .bar  { fill: #00f0ff; animation: bar  4s infinite linear; }
+    .bar2 { fill: #ffffff; animation: bar2 4s infinite linear; }
+    @keyframes bar {
+      0%, 81.9% { opacity: 0; transform: translateY(70px); }
+      82%       { opacity: .55; transform: translateY(70px); }
+      96%       { opacity: .55; transform: translateY(170px); }
+      96.1%, 100% { opacity: 0; transform: translateY(170px); }
+    }
+    @keyframes bar2 {
+      0%, 85.9% { opacity: 0; transform: translateY(160px); }
+      86%       { opacity: .4; transform: translateY(160px); }
+      93%       { opacity: .4; transform: translateY(75px); }
+      93.1%, 100% { opacity: 0; transform: translateY(75px); }
+    }
+
+    /* Fade in on load */
+    .intro { animation: fadein 1.2s ease-out both; }
+    @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
 
     @media (prefers-reduced-motion: reduce) {
-      .red, .cyan, .sliceA, .sliceB, .main { animation: none; }
-      .sliceA, .sliceB { opacity: 0; }
+      .intro, .red, .cyan, .main, .sA, .sB, .sC, .sD { animation: none; }
+      .bar, .bar2 { animation: none; opacity: 0; }
     }
   </style>
 
   <!-- Waving header background -->
   <path fill="url(#bg)" opacity=".55"
-        d="M0,0 H1200 V265 C1080,240 960,295 820,270 C680,245 560,290 420,275 C280,260 140,230 0,270 Z"/>
+        d="M0,0 H1200 V265 C1080,240 960,295 820,270 C680,245 560,290 420,275 C280,260 140,230 0,270 Z">
+    <animate attributeName="d" dur="6s" repeatCount="indefinite" calcMode="spline"
+             keyTimes="0;0.5;1" keySplines=".45 0 .55 1;.45 0 .55 1"
+             values="M0,0 H1200 V265 C1080,240 960,295 820,270 C680,245 560,290 420,275 C280,260 140,230 0,270 Z;
+                     M0,0 H1200 V250 C1080,285 960,240 820,262 C680,284 560,245 420,258 C280,272 140,290 0,250 Z;
+                     M0,0 H1200 V265 C1080,240 960,295 820,270 C680,245 560,290 420,275 C280,260 140,230 0,270 Z"/>
+  </path>
   <path fill="url(#bg)"
-        d="M0,0 H1200 V245 C1050,290 900,215 750,240 C600,265 450,300 300,255 C180,220 80,240 0,260 Z"/>
+        d="M0,0 H1200 V245 C1050,290 900,215 750,240 C600,265 450,300 300,255 C180,220 80,240 0,260 Z">
+    <animate attributeName="d" dur="8s" repeatCount="indefinite" calcMode="spline"
+             keyTimes="0;0.5;1" keySplines=".45 0 .55 1;.45 0 .55 1"
+             values="M0,0 H1200 V245 C1050,290 900,215 750,240 C600,265 450,300 300,255 C180,220 80,240 0,260 Z;
+                     M0,0 H1200 V262 C1050,225 900,290 750,262 C600,234 450,240 300,270 C180,292 80,250 0,240 Z;
+                     M0,0 H1200 V245 C1050,290 900,215 750,240 C600,265 450,300 300,255 C180,220 80,240 0,260 Z"/>
+  </path>
 
-  <!-- Glitching name -->
-  <text class="name red"    x="600" y="140">Prottoy Roy</text>
-  <text class="name cyan"   x="600" y="140">Prottoy Roy</text>
-  <text class="name main"   x="600" y="140">Prottoy Roy</text>
-  <text class="name sliceA" x="600" y="140" clip-path="url(#sliceA)">Prottoy Roy</text>
-  <text class="name sliceB" x="600" y="140" clip-path="url(#sliceB)">Prottoy Roy</text>
+  <g class="intro">
+    <!-- Glitching name -->
+    <text class="name red"  x="600" y="140">Prottoy Roy</text>
+    <text class="name cyan" x="600" y="140">Prottoy Roy</text>
+    <text class="name main" x="600" y="140" mask="url(#scan)">Prottoy Roy</text>
+    <text class="name sA"   x="600" y="140" clip-path="url(#sliceA)">Prottoy Roy</text>
+    <text class="name sB"   x="600" y="140" clip-path="url(#sliceB)">Prottoy Roy</text>
+    <text class="name sC"   x="600" y="140" clip-path="url(#sliceC)">Prottoy Roy</text>
+    <text class="name sD"   x="600" y="140" clip-path="url(#sliceD)">Prottoy Roy</text>
 
-  <!-- Subtitle -->
-  <text class="sub" x="600" y="195">CSE Undergraduate • AIUB, Dhaka</text>
+    <!-- Interference bars -->
+    <rect class="bar"  x="300" y="0" width="600" height="3"/>
+    <rect class="bar2" x="340" y="0" width="520" height="2"/>
+
+    <!-- Subtitle -->
+    <text class="sub" x="600" y="195">CSE Undergraduate • AIUB, Dhaka</text>
+  </g>
 </svg>
