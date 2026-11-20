@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="Prottoy Roy - CSE Undergraduate, AIUB, Dhaka">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0f0c29"/>
+      <stop offset="0.5" stop-color="#302b63"/>
+      <stop offset="1" stop-color="#00d4ff"/>
+    </linearGradient>
+
+    <!-- Moving horizontal bands used to "tear" the name during a glitch burst -->
+    <clipPath id="sliceA">
+      <rect x="0" width="1200" height="16" y="0">
+        <animate attributeName="y" dur="3.2s" repeatCount="indefinite" calcMode="discrete"
+                 keyTimes="0;0.84;0.87;0.90;0.93;0.96;1" values="-50;92;128;104;140;-50;-50"/>
+      </rect>
+    </clipPath>
+    <clipPath id="sliceB">
+      <rect x="0" width="1200" height="10" y="0">
+        <animate attributeName="y" dur="3.2s" repeatCount="indefinite" calcMode="discrete"
+                 keyTimes="0;0.85;0.88;0.91;0.94;0.97;1" values="-50;135;84;150;112;-50;-50"/>
+      </rect>
+    </clipPath>
+  </defs>
+
+  <style>
+    .name {
+      font: 800 88px 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      text-anchor: middle;
+    }
+    .sub {
+      font: 600 24px 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      text-anchor: middle;
+      fill: #ffffff;
+    }
+
+    /* Chromatic-aberration layers: a slight constant offset, then a jittery burst */
+    .red  { fill: #ff00c8; opacity: .85; animation: red 3.2s infinite steps(1); }
+    .cyan { fill: #00f0ff; opacity: .85; animation: cyan 3.2s infinite steps(1); }
+
+    @keyframes red {
+      0%, 84%, 100% { transform: translate(-2px, 0); }
+      86% { transform: translate(-8px, 2px); }
+      88% { transform: translate(5px, -2px); }
+      90% { transform: translate(-10px, 0); }
+      92% { transform: translate(3px, 1px); }
+      94% { transform: translate(-6px, -1px); }
+      96% { transform: translate(-2px, 0); }
+    }
+    @keyframes cyan {
+      0%, 84%, 100% { transform: translate(2px, 0); }
+      86% { transform: translate(8px, -2px); }
+      88% { transform: translate(-5px, 2px); }
+      90% { transform: translate(10px, 0); }
+      92% { transform: translate(-3px, -1px); }
+      94% { transform: translate(6px, 1px); }
+      96% { transform: translate(2px, 0); }
+    }
+
+    /* Torn slices: only visible during the burst */
+    .sliceA { fill: #ffffff; animation: sliceA 3.2s infinite steps(1); }
+    .sliceB { fill: #ffffff; animation: sliceB 3.2s infinite steps(1); }
+
+    @keyframes sliceA {
+      0%, 84%, 96%, 100% { opacity: 0; transform: none; }
+      85% { opacity: 1; transform: translate(-18px, 0); }
+      88% { opacity: 1; transform: translate(14px, 0); }
+      91% { opacity: 1; transform: translate(-24px, 0); }
+      94% { opacity: 1; transform: translate(10px, 0); }
+    }
+    @keyframes sliceB {
+      0%, 85%, 97%, 100% { opacity: 0; transform: none; }
+      86% { opacity: 1; transform: translate(22px, 0); }
+      89% { opacity: 1; transform: translate(-12px, 0); }
+      92% { opacity: 1; transform: translate(18px, 0); }
+      95% { opacity: 1; transform: translate(-16px, 0); }
+    }
+
+    /* Main white name flickers briefly during the burst */
+    .main { fill: #ffffff; animation: flicker 3.2s infinite steps(1); }
+    @keyframes flicker {
+      0%, 84%, 100% { opacity: 1; }
+      87% { opacity: .75; }
+      89% { opacity: 1; }
+      92% { opacity: .6; }
+      93% { opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .red, .cyan, .sliceA, .sliceB, .main { animation: none; }
+      .sliceA, .sliceB { opacity: 0; }
+    }
+  </style>
+
+  <!-- Waving header background -->
+  <path fill="url(#bg)" opacity=".55"
+        d="M0,0 H1200 V265 C1080,240 960,295 820,270 C680,245 560,290 420,275 C280,260 140,230 0,270 Z"/>
+  <path fill="url(#bg)"
+        d="M0,0 H1200 V245 C1050,290 900,215 750,240 C600,265 450,300 300,255 C180,220 80,240 0,260 Z"/>
+
+  <!-- Glitching name -->
+  <text class="name red"    x="600" y="140">Prottoy Roy</text>
+  <text class="name cyan"   x="600" y="140">Prottoy Roy</text>
+  <text class="name main"   x="600" y="140">Prottoy Roy</text>
+  <text class="name sliceA" x="600" y="140" clip-path="url(#sliceA)">Prottoy Roy</text>
+  <text class="name sliceB" x="600" y="140" clip-path="url(#sliceB)">Prottoy Roy</text>
+
+  <!-- Subtitle -->
+  <text class="sub" x="600" y="195">CSE Undergraduate • AIUB, Dhaka</text>
+</svg>

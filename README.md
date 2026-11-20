@@ -1,6 +1,6 @@
 <!-- Header banner -->
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f0c29,50:302b63,100:00d4ff&height=200&section=header&text=Prottoy%20Roy&fontSize=52&fontColor=ffffff&fontAlignY=36&desc=CSE%20Undergraduate%20%E2%80%A2%20AIUB%2C%20Dhaka&descAlignY=56&descSize=18&animation=fadeIn" width="100%" alt="Prottoy Roy">
+  <img src="./assets/header.svg" width="100%" alt="Prottoy Roy">
 </p>
 
 <!-- Typing animation -->
