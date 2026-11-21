@@ -86,11 +86,11 @@ NLP pipeline that flags duplicate question pairs, with text preprocessing (contr
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="32" /> GitHub Stats
 
 <p align="center">
-  <img height="165" src="https://github-readme-stats.vercel.app/api?username=prottoy94&show_icons=true&hide_border=true&theme=tokyonight" alt="GitHub stats">
-  <img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=prottoy94&layout=compact&hide_border=true&theme=tokyonight" alt="Top languages">
+  <img width="48%" src="https://raw.githubusercontent.com/prottoy94/prottoy94/output/stats.svg" alt="GitHub stats">
+  <img width="48%" src="https://raw.githubusercontent.com/prottoy94/prottoy94/output/languages.svg" alt="Most used languages">
 </p>
 <p align="center">
-  <img src="https://streak-stats.demolab.com?user=prottoy94&theme=tokyonight&hide_border=true" alt="GitHub streak">
+  <img width="97%" src="https://raw.githubusercontent.com/prottoy94/prottoy94/output/streak.svg" alt="Contribution streak">
 </p>
 
 <!-- Footer banner -->
