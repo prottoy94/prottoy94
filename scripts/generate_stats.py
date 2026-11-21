@@ -43,10 +43,19 @@ TRACK = "#1f1d33"
 BASE_CSS = """
 .corner{animation:corner 3s ease-in-out infinite}
 @keyframes corner{0%,100%{opacity:.35}50%{opacity:1}}
-.gr{animation:gr 5s infinite steps(1)}
-.gc{animation:gc 5s infinite steps(1)}
-@keyframes gr{0%,100%{transform:translate(-1px,0)}88%{transform:translate(-4px,1px)}90%{transform:translate(3px,-1px)}92%{transform:translate(-5px,0)}94%{transform:translate(-1px,0)}}
-@keyframes gc{0%,100%{transform:translate(1px,0)}88%{transform:translate(4px,-1px)}90%{transform:translate(-3px,1px)}92%{transform:translate(5px,0)}94%{transform:translate(1px,0)}}
+.gl{transform-box:fill-box;transform-origin:center}
+.gr{animation:gr 4s infinite steps(1)}
+.gc{animation:gc 4s infinite steps(1)}
+.gm{animation:gm 4s infinite steps(1)}
+.gs1{animation:gs1 4s infinite steps(1)}
+.gs2{animation:gs2 4s infinite steps(1)}
+.gs3{animation:gs3 4s infinite steps(1)}
+@keyframes gr{0%,100%{transform:translate(-1px,0)}38%{transform:translate(-5px,1px)}40%{transform:translate(3px,0)}42%{transform:translate(-1px,0)}82%{transform:translate(-8px,1px) skewX(-12deg)}84%{transform:translate(5px,-1px)}86%{transform:translate(-10px,0) skewX(14deg)}88%{transform:translate(3px,1px)}90%{transform:translate(-6px,-1px) skewX(-6deg)}92%{transform:translate(4px,0)}94%{transform:translate(-1px,0)}}
+@keyframes gc{0%,100%{transform:translate(1px,0)}38%{transform:translate(5px,-1px)}40%{transform:translate(-3px,0)}42%{transform:translate(1px,0)}82%{transform:translate(8px,-1px) skewX(12deg)}84%{transform:translate(-5px,1px)}86%{transform:translate(10px,0) skewX(-14deg)}88%{transform:translate(-3px,-1px)}90%{transform:translate(6px,1px) skewX(6deg)}92%{transform:translate(-4px,0)}94%{transform:translate(1px,0)}}
+@keyframes gm{0%,100%{transform:none;opacity:1}39%{transform:translateX(2px);opacity:.8}41%{transform:none;opacity:1}83%{transform:skewX(-14deg) translateX(-3px);opacity:.75}85%{transform:skewX(8deg) translateX(2px);opacity:1}87%{transform:none;opacity:.4}89%{transform:scaleY(1.15);opacity:1}91%{transform:skewX(-5deg);opacity:.7}93%{transform:none;opacity:1}}
+@keyframes gs1{0%,100%{transform:none}38%{transform:translateX(-14px)}40%{transform:translateX(10px)}42%{transform:none}82%{transform:translateX(-18px)}85%{transform:translateX(14px)}88%{transform:translateX(-24px)}91%{transform:translateX(9px)}94%{transform:none}}
+@keyframes gs2{0%,100%{transform:none}39%{transform:translateX(20px)}41%{transform:translateX(-10px)}43%{transform:none}83%{transform:translateX(22px)}86%{transform:translateX(-16px)}89%{transform:translateX(12px)}92%{transform:translateX(-20px)}95%{transform:none}}
+@keyframes gs3{0%,100%{transform:none}84%{transform:translateX(-10px)}87%{transform:translateX(18px)}90%{transform:translateX(-14px)}93%{transform:translateX(22px)}96%{transform:none}}
 .rise{animation:rise .7s ease-out backwards}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}}
 .grow{transform-box:fill-box;transform-origin:left center;animation:grow 1.2s cubic-bezier(.2,.8,.2,1) backwards}
@@ -121,7 +130,7 @@ class Card:
         w, h = self.w, self.h
         self.defs.append(
             '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">'
-            '<stop offset="0" stop-color="#0c0b14"/><stop offset="1" stop-color="#07070c"/></linearGradient>'
+            '<stop offset="0" stop-color="#050508"/><stop offset="1" stop-color="#020203"/></linearGradient>'
             '<linearGradient id="edge" x1="0" y1="0" x2="1" y2="0">'
             f'<stop offset="0" stop-color="{BLUE}"/><stop offset=".5" stop-color="{VIOLET}"/>'
             f'<stop offset="1" stop-color="{MAGENTA}"/>'
@@ -150,14 +159,46 @@ class Card:
             f'<path class="corner" d="{corners}" fill="none" stroke="{CYAN}" stroke-width="2" stroke-linecap="round"/>',
         )
 
-    def title(self, text: str, underline: int, x: int = 25, y: int = 38) -> None:
-        """Title with a permanent RGB split and a periodic glitch jolt."""
+    def glitch(self, text: str, x: float, y: float, size: float, anchor: str = "start", delay: float = 0.0) -> str:
+        """Glitching text: RGB split, skew jolts, flicker and torn horizontal slices.
+
+        Each 4 s loop has a short twitch (~40%) and a bigger burst (~82-96%).
+        `delay` (negative) shifts the loop so cards don't glitch in sync.
+        """
         t = escape(text)
+        top, span = y - 0.8 * size, 0.9 * size
+        style = f'style="animation-delay:{delay:.1f}s"'
+        common = f'x="{x}" y="{y}" text-anchor="{anchor}"'
+
+        def band(height: float, key_times: str, fracs: list) -> str:
+            cid = self.uid("gcl")
+            vals = ";".join("-1000" if f is None else f"{top + f * span - height / 2:.1f}" for f in fracs)
+            self.defs.append(
+                f'<clipPath id="{cid}"><rect x="-2000" width="5000" height="{height:.1f}" y="-1000">'
+                f'<animate attributeName="y" dur="4s" begin="{delay:.1f}s" repeatCount="indefinite" '
+                f'calcMode="discrete" keyTimes="{key_times}" values="{vals}"/></rect></clipPath>'
+            )
+            return cid
+
+        c1 = band(size * 0.3, "0;.38;.40;.42;.82;.85;.88;.91;.94;1",
+                  [None, .2, .6, None, .1, .5, .75, .3, None, None])
+        c2 = band(size * 0.15, "0;.39;.41;.43;.83;.86;.89;.92;.95;1",
+                  [None, .8, .3, None, .9, .2, .55, .7, None, None])
+        c3 = band(size * 0.45, "0;.84;.87;.90;.93;.96;1",
+                  [None, .4, .05, .65, .25, None, None])
+        return (
+            f'<text class="gl gr" {common} fill="{MAGENTA}" opacity=".85" {style}>{t}</text>'
+            f'<text class="gl gc" {common} fill="{CYAN}" opacity=".85" {style}>{t}</text>'
+            f'<text class="gl gm" {common} fill="{WHITE}" {style}>{t}</text>'
+            f'<text class="gs1" {common} fill="{WHITE}" clip-path="url(#{c1})" {style}>{t}</text>'
+            f'<text class="gs2" {common} fill="{CYAN}" clip-path="url(#{c2})" {style}>{t}</text>'
+            f'<text class="gs3" {common} fill="{MAGENTA}" clip-path="url(#{c3})" {style}>{t}</text>'
+        )
+
+    def title(self, text: str, underline: int, x: int = 25, y: int = 38, delay: float = 0.0) -> None:
         self.add(
             f'<g font-family="{MONO}" font-size="15" font-weight="700" letter-spacing="1.5">'
-            f'<text class="gr" x="{x}" y="{y}" fill="{MAGENTA}" opacity=".8">{t}</text>'
-            f'<text class="gc" x="{x}" y="{y}" fill="{CYAN}" opacity=".8">{t}</text>'
-            f'<text x="{x}" y="{y}" fill="{WHITE}">{t}</text></g>',
+            f'{self.glitch(text, x, y, 15, delay=delay)}</g>',
             f'<rect class="grow" x="{x}" y="{y + 9}" width="{underline}" height="2" rx="1" '
             'fill="url(#hline)" style="animation-delay:.15s"/>',
         )
@@ -231,8 +272,8 @@ def render_stats(m: dict) -> str:
         )
         c.odometer(f"{value:,}", 318, y, 15, "end", CYAN, delay + 0.1)
 
-    # Rank ring: draws in, glows, has an orbiting spark and two counter-rotating HUD rings.
-    r = 44
+    # Rank ring: draws in once and glows.
+    r = 56
     circ = 2 * math.pi * r
     progress = max(3.0, min(100.0, 100 - m["percentile"]))
     offset = circ * (1 - progress / 100)
@@ -244,21 +285,14 @@ def render_stats(m: dict) -> str:
         f".ring{{animation:ring 1.8s cubic-bezier(.2,.8,.2,1) .5s backwards}}"
         f"@keyframes ring{{from{{stroke-dashoffset:{circ:.1f}}}}}"
     )
-    grade = escape(m["grade"])
     c.add(
         '<g class="rise" style="animation-delay:.2s"><g transform="translate(415,108)">'
-        f'<circle class="spin" r="58" fill="none" stroke="{VIOLET}" stroke-opacity=".6" stroke-width="1.2" stroke-dasharray="3 7"/>'
-        f'<circle class="spinr" r="34" fill="none" stroke="{BLUE}" stroke-opacity=".45" stroke-width="1" stroke-dasharray="1 5"/>'
-        f'<circle r="{r}" fill="none" stroke="{TRACK}" stroke-width="7"/>'
-        f'<circle class="ring" r="{r}" fill="none" stroke="url(#ringG)" stroke-width="7" stroke-linecap="round" '
+        f'<circle r="{r}" fill="none" stroke="{TRACK}" stroke-width="9"/>'
+        f'<circle class="ring" r="{r}" fill="none" stroke="url(#ringG)" stroke-width="9" stroke-linecap="round" '
         f'stroke-dasharray="{circ:.1f}" stroke-dashoffset="{offset:.1f}" transform="rotate(-90)" filter="url(#glow)"/>'
-        f'<circle class="orbit" r="{r}" fill="none" stroke="{WHITE}" stroke-opacity=".85" stroke-width="2.5" '
-        f'stroke-linecap="round" stroke-dasharray="5 {circ - 5:.1f}"/>'
-        f'<text y="-14" text-anchor="middle" font-family="{MONO}" font-size="9" letter-spacing="3" fill="{MUTED}">RANK</text>'
-        f'<g font-family="{MONO}" font-size="26" font-weight="800" text-anchor="middle">'
-        f'<text class="gr" y="16" fill="{MAGENTA}" opacity=".85">{grade}</text>'
-        f'<text class="gc" y="16" fill="{CYAN}" opacity=".85">{grade}</text>'
-        f'<text y="16" fill="{WHITE}">{grade}</text></g></g></g>'
+        f'<text y="-18" text-anchor="middle" font-family="{MONO}" font-size="11" letter-spacing="3" fill="{MUTED}">RANK</text>'
+        f'<g font-family="{MONO}" font-size="34" font-weight="800">'
+        f'{c.glitch(m["grade"], 0, 20, 34, "middle")}</g></g></g>'
     )
     return c.svg(f"{m['name'] or m['login']}'s GitHub stats")
 
